@@ -1,0 +1,53 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 29
+    defaultConfig {
+        applicationId "gooner.demo.tranning_rxandroid"
+        minSdkVersion 25
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+ext {
+    lib_versions = [
+            rx_java      : "2.2.8",
+            rx_android   : "2.1.1",
+            rx_kotlin    : "2.1.0",
+            recycler_view: "1.0.0-rc02"
+    ]
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.core:core-ktx:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    implementation "androidx.recyclerview:recyclerview:$lib_versions.recycler_view"
+
+
+    // RxJava
+    implementation "io.reactivex.rxjava2:rxjava:$lib_versions.rx_java"
+    // RxKotlin
+    implementation "io.reactivex.rxjava2:rxkotlin:$lib_versions.rx_kotlin"
+    // RxAndroid
+    implementation "io.reactivex.rxjava2:rxandroid:$lib_versions.rx_android"
+}
