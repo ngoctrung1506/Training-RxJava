@@ -9,7 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".operator.combine.ConcatExampleActivity"></activity>
+        <activity android:name=".real.heavytask.HeavyTaskActivity"></activity>
+        <activity android:name=".real.pagination.PaginationActivity" />
+        <activity android:name=".real.search.SearchActivity" />
+        <activity android:name=".operator.combine.ConcatExampleActivity" />
         <activity android:name=".operator.combine.MergeExampleActivity" />
         <activity android:name=".operator.transfrom.BufferExampleActivity" />
         <activity android:name=".operator.filter.SkipExampleActivity" />

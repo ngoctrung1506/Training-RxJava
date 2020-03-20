@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import gooner.demo.tranning_rxandroid.real.pagination.PaginationActivity
+import gooner.demo.tranning_rxandroid.real.search.SearchActivity
 import io.reactivex.*
 import io.reactivex.Single.create
 import io.reactivex.disposables.Disposable
@@ -54,14 +56,7 @@ class MainActivity : AppCompatActivity() {
          startActivity(Intent(this@MainActivity, RxBusActivity::class.java))
      }
 
-     fun startPaginationActivity(view: View?) {
-         startActivity(
-             Intent(
-                 this@MainActivity,
-                 PaginationActivity::class.java
-             )
-         )
-     }
+
 
      fun startComposeOperator(view: View?) {
          startActivity(
@@ -72,14 +67,25 @@ class MainActivity : AppCompatActivity() {
          )
      }
 
-     fun startSearchActivity(view: View?) {
-         startActivity(
-             Intent(
-                 this@MainActivity,
-                 SearchActivity::class.java
-             )
-         )
-     }*/
+*/
+
+    fun startPaginationActivity(view: View?) {
+        startActivity(
+            Intent(
+                this@MainActivity,
+                PaginationActivity::class.java
+            )
+        )
+    }
+
+    fun startSearchActivity(view: View?) {
+        startActivity(
+            Intent(
+                this@MainActivity,
+                SearchActivity::class.java
+            )
+        )
+    }
 
     private fun onTranningRxJava() {
         var alphabet = mutableListOf<String>("A", "B", "C", "D", "E", "F")

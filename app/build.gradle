@@ -4,6 +4,9 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'kotlin-kapt'
+
+
 android {
     compileSdkVersion 29
     defaultConfig {
@@ -24,10 +27,11 @@ android {
 
 ext {
     lib_versions = [
-            rx_java      : "2.2.8",
-            rx_android   : "2.1.1",
-            rx_kotlin    : "2.1.0",
-            recycler_view: "1.0.0-rc02"
+            rx_java           : "2.2.8",
+            rx_android        : "2.1.1",
+            rx_kotlin         : "2.1.0",
+            recycler_view     : "1.0.0-rc02",
+            butterKnifeVersion: "10.2.0"
     ]
 }
 
@@ -50,4 +54,7 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxkotlin:$lib_versions.rx_kotlin"
     // RxAndroid
     implementation "io.reactivex.rxjava2:rxandroid:$lib_versions.rx_android"
+
+    implementation "com.jakewharton:butterknife:$lib_versions.butterKnifeVersion"
+    kapt "com.jakewharton:butterknife-compiler:$lib_versions.butterKnifeVersion"
 }
