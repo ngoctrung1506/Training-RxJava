@@ -3,4 +3,14 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <!-- Photo editor -->
+    <color name="editor_background">#121212</color>
+    <color name="editor_panel">#1E1E1E</color>
+    <color name="editor_panel_translucent">#CC1E1E1E</color>
+    <color name="editor_toolbar">#262626</color>
+    <color name="editor_accent">#FFD54F</color>
+    <color name="editor_text">#FFFFFF</color>
+    <color name="editor_text_secondary">#B3FFFFFF</color>
+    <color name="editor_divider">#33FFFFFF</color>
 </resources>

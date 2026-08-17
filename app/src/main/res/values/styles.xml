@@ -8,4 +8,27 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- Full screen dark theme used by the photo editor. -->
+    <style name="AppTheme.Editor" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/editor_panel</item>
+        <item name="colorPrimaryDark">@color/editor_background</item>
+        <item name="colorAccent">@color/editor_accent</item>
+        <item name="android:windowBackground">@color/editor_background</item>
+    </style>
+
+    <style name="EditorToolButton" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minWidth">72dp</item>
+        <item name="android:textColor">@color/editor_text</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="EditorSliderLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/editor_text_secondary</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
 </resources>

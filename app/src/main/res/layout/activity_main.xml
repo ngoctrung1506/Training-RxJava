@@ -16,6 +16,13 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="startPhotoEditorActivity"
+            android:text="@string/photo_editor"
+            android:textColor="@android:color/black" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:onClick="startOperatorsActivity"
             android:text="@string/operators"
             android:textColor="@android:color/black" />

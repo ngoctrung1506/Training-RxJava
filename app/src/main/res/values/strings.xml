@@ -46,4 +46,61 @@
     <string name="switch_map">Switch Map</string>
     <string name="take_while">Take While</string>
     <string name="take_until">Take Until</string>
+
+    <!-- Photo editor -->
+    <string name="photo_editor">Photo Editor</string>
+    <string name="editor_title">Photo editor</string>
+    <string name="editor_save">Save</string>
+    <string name="editor_share">Share</string>
+    <string name="editor_empty_hint">Pick a photo, then recolour it, add captions, stickers and a sound.</string>
+    <string name="editor_pick_photo">Pick a photo</string>
+    <string name="editor_pick_sticker">Pick an image to add</string>
+    <string name="editor_pick_sound">Pick a sound</string>
+    <string name="editor_pick_photo_first">Pick a photo first</string>
+    <string name="editor_no_picker">No app available to pick a file</string>
+    <string name="editor_load_failed">Could not open the selected file</string>
+    <string name="editor_saved">Saved to your gallery</string>
+    <string name="editor_save_failed">Could not save the picture</string>
+    <string name="editor_storage_permission_needed">Storage permission is needed to save the picture</string>
+
+    <string name="editor_tool_photo">Photo</string>
+    <string name="editor_tool_filter">Filter</string>
+    <string name="editor_tool_adjust">Adjust</string>
+    <string name="editor_tool_text">Text</string>
+    <string name="editor_tool_sticker">Image</string>
+    <string name="editor_tool_sound">Sound</string>
+
+    <string name="editor_action_edit">Edit</string>
+    <string name="editor_action_duplicate">Duplicate</string>
+    <string name="editor_action_delete">Delete</string>
+
+    <string name="editor_adjust_brightness">Brightness</string>
+    <string name="editor_adjust_contrast">Contrast</string>
+    <string name="editor_adjust_saturation">Saturation</string>
+    <string name="editor_adjust_warmth">Warmth</string>
+    <string name="editor_adjust_reset">Reset</string>
+
+    <string name="editor_text_add_title">Add text</string>
+    <string name="editor_text_edit_title">Edit text</string>
+    <string name="editor_text_hint">Your caption</string>
+    <string name="editor_text_size">Size</string>
+    <string name="editor_text_color">Colour</string>
+
+    <string name="editor_sound_empty">No sound attached</string>
+    <string name="editor_sound_default_title">Sound</string>
+    <string name="editor_sound_pick">Choose</string>
+    <string name="editor_sound_play">Play</string>
+    <string name="editor_sound_pause">Pause</string>
+    <string name="editor_sound_remove">Remove</string>
+    <string name="editor_sound_failed">Could not play this sound</string>
+
+    <string name="filter_original">Original</string>
+    <string name="filter_mono">Mono</string>
+    <string name="filter_noir">Noir</string>
+    <string name="filter_sepia">Sepia</string>
+    <string name="filter_vivid">Vivid</string>
+    <string name="filter_cool">Cool</string>
+    <string name="filter_warm">Warm</string>
+    <string name="filter_fade">Fade</string>
+    <string name="filter_invert">Invert</string>
 </resources>

@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="gooner.demo.tranning_rxandroid">
 
+    <!-- Only needed to save the edited picture on Android 9 and older; from Android 10
+         on, MediaStore writes into the gallery without any permission. -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,6 +15,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".editor.PhotoEditorActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/photo_editor"
+            android:theme="@style/AppTheme.Editor" />
         <activity android:name=".operator.combine.ConcatExampleActivity"></activity>
         <activity android:name=".operator.combine.MergeExampleActivity" />
         <activity android:name=".operator.transfrom.BufferExampleActivity" />

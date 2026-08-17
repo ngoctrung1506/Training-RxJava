@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import gooner.demo.tranning_rxandroid.editor.PhotoEditorActivity
 import io.reactivex.*
 import io.reactivex.Single.create
 import io.reactivex.disposables.Disposable
@@ -29,6 +30,10 @@ class MainActivity : AppCompatActivity() {
 
     fun startOperatorsActivity(view: View?) {
         startActivity(Intent(this@MainActivity, OperatorsActivity::class.java))
+    }
+
+    fun startPhotoEditorActivity(view: View?) {
+        startActivity(Intent(this@MainActivity, PhotoEditorActivity::class.java))
     }
 
     /* fun startNetworkingActivity(view: View?) {
