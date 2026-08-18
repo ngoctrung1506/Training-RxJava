@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="gooner.demo.tranning_rxandroid">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Only needed to save the edited picture on Android 9 and older; from Android 10
          on, MediaStore writes into the gallery without any permission. -->
@@ -17,10 +16,9 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".editor.PhotoEditorActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/photo_editor"
             android:theme="@style/AppTheme.Editor" />
-        <activity android:name=".operator.combine.ConcatExampleActivity"></activity>
+        <activity android:name=".operator.combine.ConcatExampleActivity" />
         <activity android:name=".operator.combine.MergeExampleActivity" />
         <activity android:name=".operator.transfrom.BufferExampleActivity" />
         <activity android:name=".operator.filter.SkipExampleActivity" />
@@ -29,7 +27,9 @@
         <activity android:name=".operator.transfrom.MapExampleActivity" />
         <activity android:name=".operator.create.SimpleExampleActivity" />
         <activity android:name=".OperatorsActivity" />
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

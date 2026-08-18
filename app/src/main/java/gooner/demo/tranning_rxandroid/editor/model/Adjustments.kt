@@ -4,25 +4,19 @@ import android.graphics.ColorMatrix
 
 /**
  * The manual colour controls of the "Adjust" tool. They are applied on top of the
- * selected [PhotoFilter].
+ * selected [PhotoFilter]. Immutable: every slider move produces a new value, which is
+ * what Compose needs to notice the change.
  */
 data class Adjustments(
     /** -100f..100f, added to every channel. */
-    var brightness: Float = DEFAULT_BRIGHTNESS,
+    val brightness: Float = DEFAULT_BRIGHTNESS,
     /** 0.5f..2f, multiplier around mid grey. */
-    var contrast: Float = DEFAULT_CONTRAST,
+    val contrast: Float = DEFAULT_CONTRAST,
     /** 0f..2f, 0f is fully grey, 1f keeps the original colours. */
-    var saturation: Float = DEFAULT_SATURATION,
+    val saturation: Float = DEFAULT_SATURATION,
     /** -50f..50f, positive is warmer (orange), negative is cooler (blue). */
-    var warmth: Float = DEFAULT_WARMTH
+    val warmth: Float = DEFAULT_WARMTH
 ) {
-
-    fun reset() {
-        brightness = DEFAULT_BRIGHTNESS
-        contrast = DEFAULT_CONTRAST
-        saturation = DEFAULT_SATURATION
-        warmth = DEFAULT_WARMTH
-    }
 
     fun toColorMatrix(): ColorMatrix {
         val matrix = ColorMatrix()
@@ -44,5 +38,10 @@ data class Adjustments(
         const val DEFAULT_CONTRAST = 1f
         const val DEFAULT_SATURATION = 1f
         const val DEFAULT_WARMTH = 0f
+
+        val BRIGHTNESS_RANGE = -100f..100f
+        val CONTRAST_RANGE = 0.5f..2f
+        val SATURATION_RANGE = 0f..2f
+        val WARMTH_RANGE = -50f..50f
     }
 }

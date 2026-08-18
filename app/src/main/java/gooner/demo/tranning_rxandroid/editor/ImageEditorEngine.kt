@@ -15,101 +15,103 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import gooner.demo.tranning_rxandroid.editor.model.EditorOverlay
 import gooner.demo.tranning_rxandroid.editor.model.PhotoFilter
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
 /**
- * All the pixel pushing of the editor, exposed as RxJava streams so the UI never blocks:
- * decoding, thumbnail generation, rendering the final picture and saving it to the gallery.
+ * All the pixel pushing of the editor: decoding, thumbnail generation, rendering the
+ * final picture and saving it to the gallery.
+ *
+ * Every entry point is a suspending function (or a [Flow]) that moves the work onto a
+ * background dispatcher, so callers never have to think about threads.
  */
-class ImageEditorEngine(context: Context) {
+class ImageEditorEngine(
+    context: Context,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val computeDispatcher: CoroutineDispatcher = Dispatchers.Default
+) {
 
     private val appContext = context.applicationContext
 
     /** Decodes [uri], honouring the EXIF rotation, downscaled to fit [maxSize] pixels. */
-    fun loadBitmap(uri: Uri, maxSize: Int): Single<Bitmap> {
-        return Single.fromCallable {
-            val bounds = BitmapFactory.Options()
-            bounds.inJustDecodeBounds = true
-            openStream(uri).use { BitmapFactory.decodeStream(it, null, bounds) }
-            if (bounds.outWidth <= 0 || bounds.outHeight <= 0) {
-                throw IOException("Unable to read the picture bounds")
-            }
+    suspend fun loadBitmap(uri: Uri, maxSize: Int): Bitmap = withContext(ioDispatcher) {
+        val bounds = BitmapFactory.Options()
+        bounds.inJustDecodeBounds = true
+        openStream(uri).use { BitmapFactory.decodeStream(it, null, bounds) }
+        if (bounds.outWidth <= 0 || bounds.outHeight <= 0) {
+            throw IOException("Unable to read the picture bounds")
+        }
 
-            val options = BitmapFactory.Options()
-            options.inSampleSize = sampleSizeFor(bounds.outWidth, bounds.outHeight, maxSize)
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888
-            val decoded = openStream(uri).use { BitmapFactory.decodeStream(it, null, options) }
-                ?: throw IOException("Unable to decode the picture")
+        val options = BitmapFactory.Options()
+        options.inSampleSize = sampleSizeFor(bounds.outWidth, bounds.outHeight, maxSize)
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888
+        val decoded = openStream(uri).use { BitmapFactory.decodeStream(it, null, options) }
+            ?: throw IOException("Unable to decode the picture")
 
-            fitInside(applyExifRotation(uri, decoded), maxSize)
-        }.subscribeOn(Schedulers.io())
+        fitInside(applyExifRotation(uri, decoded), maxSize)
     }
 
     /**
-     * Emits one preview per [PhotoFilter], in order, as soon as it is ready. The heavy
-     * work happens on the computation scheduler while the filter strip fills up.
+     * Emits one preview per [PhotoFilter], in order, as soon as it is ready, so the
+     * filter strip fills up while the work is still going on.
      */
-    fun filterThumbnails(source: Bitmap, thumbnailSize: Int): Observable<FilterThumbnail> {
-        return Single.fromCallable { squareThumbnail(source, thumbnailSize) }
-            .flatMapObservable { thumbnail ->
-                Observable.fromArray(*PhotoFilter.values())
-                    .map { filter ->
-                        FilterThumbnail(filter, applyColorMatrix(thumbnail, filter.colorMatrix()))
-                    }
-            }
-            .subscribeOn(Schedulers.computation())
-    }
+    fun filterPreviews(source: Bitmap, thumbnailSize: Int): Flow<FilterPreview> = flow {
+        val thumbnail = squareThumbnail(source, thumbnailSize)
+        for (filter in PhotoFilter.values()) {
+            currentCoroutineContext().ensureActive()
+            emit(FilterPreview(filter, applyColorMatrix(thumbnail, filter.colorMatrix())))
+        }
+    }.flowOn(computeDispatcher)
 
     /** Re-draws the photo, its colour filter and all the overlays at full resolution. */
-    fun render(snapshot: EditorSnapshot): Single<Bitmap> {
-        return Single.fromCallable {
-            val source = snapshot.baseBitmap
-            val output = Bitmap.createBitmap(source.width, source.height, Bitmap.Config.ARGB_8888)
-            val canvas = Canvas(output)
-            val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
-            paint.colorFilter = ColorMatrixColorFilter(snapshot.colorMatrix)
-            canvas.drawBitmap(source, 0f, 0f, paint)
-            for (overlay in snapshot.overlays) {
-                overlay.draw(canvas)
-            }
-            output
-        }.subscribeOn(Schedulers.computation())
+    suspend fun render(snapshot: EditorSnapshot): Bitmap = withContext(computeDispatcher) {
+        val source = snapshot.photo
+        val output = Bitmap.createBitmap(source.width, source.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(output)
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
+        paint.colorFilter = ColorMatrixColorFilter(snapshot.colorMatrix)
+        canvas.drawBitmap(source, 0f, 0f, paint)
+        for (overlay in snapshot.overlays) {
+            overlay.draw(canvas)
+        }
+        output
     }
 
     /** Writes [bitmap] as a JPEG into the shared Pictures collection and returns its uri. */
-    fun saveToGallery(bitmap: Bitmap, displayName: String): Single<Uri> {
-        return Single.fromCallable {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                saveWithMediaStore(bitmap, displayName)
-            } else {
-                saveWithLegacyMediaStore(bitmap, displayName)
-            }
-        }.subscribeOn(Schedulers.io())
+    suspend fun saveToGallery(bitmap: Bitmap, displayName: String): Uri = withContext(ioDispatcher) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            saveWithMediaStore(bitmap, displayName)
+        } else {
+            saveWithLegacyMediaStore(bitmap, displayName)
+        }
     }
 
     /** Best effort human readable name for a picked document, used for the sound chip. */
-    fun displayNameOf(uri: Uri): Single<String> {
-        return Single.fromCallable {
-            var name: String? = null
-            val cursor = appContext.contentResolver.query(
-                uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null
-            )
-            cursor?.use {
-                if (it.moveToFirst()) {
-                    val columnIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                    if (columnIndex >= 0) {
-                        name = it.getString(columnIndex)
-                    }
+    suspend fun displayNameOf(uri: Uri): String? = withContext(ioDispatcher) {
+        var name: String? = null
+        val cursor = appContext.contentResolver.query(
+            uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null
+        )
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val columnIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                if (columnIndex >= 0) {
+                    name = it.getString(columnIndex)
                 }
             }
-            name ?: uri.lastPathSegment ?: uri.toString()
-        }.subscribeOn(Schedulers.io())
+        }
+        name ?: uri.lastPathSegment
     }
 
     private fun saveWithMediaStore(bitmap: Bitmap, displayName: String): Uri {
@@ -238,4 +240,11 @@ class ImageEditorEngine(context: Context) {
 }
 
 /** A filter together with the preview shown in the filter strip. */
-class FilterThumbnail(val filter: PhotoFilter, val preview: Bitmap)
+data class FilterPreview(val filter: PhotoFilter, val preview: Bitmap)
+
+/** Everything needed to re-render the picture, frozen at export time. */
+data class EditorSnapshot(
+    val photo: Bitmap,
+    val colorMatrix: ColorMatrix,
+    val overlays: List<EditorOverlay>
+)
